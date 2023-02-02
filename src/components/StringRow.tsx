@@ -1,24 +1,29 @@
+import { useAppDispatch } from "../app/hooks";
+import { changeNote } from "../features/notes/notesSlice";
+
 function StringRow(props: StringRowProps) {
-  const { note } = props;
+  const { note, stringIndex } = props;
 
   return (
     <div className="flex flex-row space-x-1">
-      <ChangeNoteButton dir="DOWN" />
+      <ChangeNoteButton stringIndex={stringIndex} dir="DOWN" />
       <div className="w-96 border py-2 hover:bg-sky-100 rounded-md">{note}</div>
-      <ChangeNoteButton dir="UP" />
+      <ChangeNoteButton stringIndex={stringIndex} dir="UP" />
     </div>
   );
 }
 
 type StringRowProps = {
-  note: string;
+  note: number;
+  stringIndex: string;
 };
 
 function ChangeNoteButton(props: ChangeNoteButtonProps) {
-  const { dir } = props;
+  const { stringIndex, dir } = props;
+  const dispatch = useAppDispatch();
 
   const handleClick = () => {
-    console.log("pressed", dir);
+    dispatch(changeNote({ direction: dir, stringIndex }));
   };
 
   return (
@@ -33,6 +38,7 @@ function ChangeNoteButton(props: ChangeNoteButtonProps) {
 
 type ChangeNoteButtonProps = {
   dir: "UP" | "DOWN";
+  stringIndex: string;
 };
 
 export default StringRow;
