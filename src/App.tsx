@@ -23,7 +23,7 @@ function App() {
       ) : (
         <div className="text-center flex flex-col space-y-2">
           {Object.entries(notes).map(([k, v]) => (
-            <StringRow key={k} note={v} stringIndex={k} />
+            <StringRow key={k} noteIndex={v} stringIndex={k} />
           ))}
         </div>
       )}
