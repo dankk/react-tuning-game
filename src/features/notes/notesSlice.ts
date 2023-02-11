@@ -11,8 +11,11 @@ interface InitialState {
 
 export const notesSlice = createSlice({
   name: "notes",
-  initialState: { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 },
+  initialState: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
   reducers: {
+    setInitialNotes: (state, action) => {
+      return Object.assign({}, action.payload);
+    },
     changeNote: (state, action) => {
       const stringIndex: keyof InitialState = action.payload.stringIndex;
       switch (action.payload.direction) {
@@ -27,5 +30,5 @@ export const notesSlice = createSlice({
   },
 });
 
-export const { changeNote } = notesSlice.actions;
+export const { changeNote, setInitialNotes } = notesSlice.actions;
 export default notesSlice.reducer;
