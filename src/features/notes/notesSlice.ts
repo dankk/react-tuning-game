@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface InitialState {
+interface NoteState {
   0: number;
   1: number;
   2: number;
@@ -9,15 +9,18 @@ interface InitialState {
   5: number;
 }
 
+type InitialState = NoteState | null;
+
 export const notesSlice = createSlice({
   name: "notes",
-  initialState: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+  initialState: null as InitialState,
   reducers: {
     setInitialNotes: (state, action) => {
       return Object.assign({}, action.payload);
     },
     changeNote: (state, action) => {
-      const stringIndex: keyof InitialState = action.payload.stringIndex;
+      if (!state) return state;
+      const stringIndex: keyof NoteState = action.payload.stringIndex;
       switch (action.payload.direction) {
         case "UP":
           return { ...state, [stringIndex]: state[stringIndex] + 1 };

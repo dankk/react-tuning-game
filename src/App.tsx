@@ -13,12 +13,20 @@ function App() {
 
   return (
     <div className="mt-32 flex justify-center">
-      <button onClick={handleStart}>Start</button>
-      <div className="text-center flex flex-col space-y-2">
-        {Object.entries(notes).map(([k, v]) => (
-          <StringRow key={k} note={v} stringIndex={k} />
-        ))}
-      </div>
+      {!notes ? (
+        <button
+          className="hover:bg-sky-100 font-bold py-2 px-4 border rounded"
+          onClick={handleStart}
+        >
+          Start
+        </button>
+      ) : (
+        <div className="text-center flex flex-col space-y-2">
+          {Object.entries(notes).map(([k, v]) => (
+            <StringRow key={k} note={v} stringIndex={k} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
