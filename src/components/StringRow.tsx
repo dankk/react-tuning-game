@@ -1,9 +1,12 @@
 import { useAppDispatch } from "../app/hooks";
 import { noteList } from "../features/notes/notes";
 import { changeNote } from "../features/notes/notesSlice";
+import { playSound } from "../utils/sound";
 
 function StringRow(props: StringRowProps) {
   const { noteIndex, stringIndex } = props;
+
+  const noteName = `${noteList[noteIndex].note}${noteList[noteIndex].octave}`;
 
   return (
     <div className="flex flex-row space-x-1">
@@ -12,7 +15,10 @@ function StringRow(props: StringRowProps) {
         dir="DOWN"
         noteIndex={noteIndex}
       />
-      <div className="w-96 border py-2 hover:bg-sky-100 rounded-md cursor-pointer">
+      <div
+        className="w-96 border py-2 hover:bg-sky-100 rounded-md cursor-pointer"
+        onClick={() => playSound(noteName)}
+      >
         {noteList[noteIndex].note}
       </div>
       <ChangeNoteButton
