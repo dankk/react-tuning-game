@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import notesReducer from "../features/notes/notesSlice";
+import sliderReducer from "../features/slider/sliderSlice";
 
 export const store = configureStore({
   reducer: {
     notes: notesReducer,
+    slider: sliderReducer,
   },
 });
 
