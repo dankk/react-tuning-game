@@ -1,4 +1,5 @@
 import { useAppDispatch } from "../app/hooks";
+import useNote from "../app/useNote";
 import { noteList } from "../features/notes/notes";
 import { changeNote } from "../features/notes/notesSlice";
 import { playSound } from "../utils/sound";
@@ -6,7 +7,7 @@ import { playSound } from "../utils/sound";
 function StringRow(props: StringRowProps) {
   const { noteIndex, stringIndex } = props;
 
-  const noteName = `${noteList[noteIndex].note}${noteList[noteIndex].octave}`;
+  const { playNote } = useNote(noteIndex);
 
   return (
     <div className="flex flex-row space-x-1">
@@ -17,7 +18,7 @@ function StringRow(props: StringRowProps) {
       />
       <div
         className="w-96 border py-2 hover:bg-sky-100 rounded-md cursor-pointer"
-        onClick={() => playSound(noteName)}
+        onClick={playNote}
       >
         {noteList[noteIndex].note}
       </div>
@@ -39,6 +40,8 @@ function ChangeNoteButton(props: ChangeNoteButtonProps) {
   const { stringIndex, dir, noteIndex } = props;
   const dispatch = useAppDispatch();
 
+  const { playNote } = useNote(noteIndex + (dir == "UP" ? 1 : -1));
+
   const isDisabled =
     (dir == "DOWN" && noteIndex == 0) ||
     (dir == "UP" && noteIndex == noteList.length - 1);
@@ -49,6 +52,7 @@ function ChangeNoteButton(props: ChangeNoteButtonProps) {
 
   const handleClick = () => {
     if (isDisabled) return;
+    playNote();
     dispatch(changeNote({ direction: dir, stringIndex }));
   };
 

@@ -7,6 +7,7 @@ import { setInitialNotes } from "./features/notes/notesSlice";
 function App() {
   const dispatch = useAppDispatch();
   const notes = useAppSelector((state) => state.notes);
+  const difficulty = useAppSelector((state) => state.slider);
 
   const handleStart = () => {
     dispatch(setInitialNotes(tunings.standard));
@@ -18,6 +19,7 @@ function App() {
         <StartScreen handleStart={handleStart} />
       ) : (
         <div className="text-center flex flex-col space-y-2">
+          <h1 className="text-xl mb-4">Difficulty: {difficulty}</h1>
           {Object.entries(notes).map(([k, v]) => (
             <StringRow key={k} noteIndex={v} stringIndex={k} />
           ))}
