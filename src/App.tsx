@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import StartScreen from "./components/StartScreen";
-import StringRow from "./components/StringRow";
+import StringRows from "./components/StringRows";
 import { tunings } from "./features/notes/notes";
 import { setInitialNotes } from "./features/notes/notesSlice";
 
@@ -18,12 +18,7 @@ function App() {
       {!notes ? (
         <StartScreen handleStart={handleStart} />
       ) : (
-        <div className="text-center flex flex-col space-y-2">
-          <h1 className="text-xl mb-4">Difficulty: {difficulty}</h1>
-          {Object.entries(notes).map(([k, v]) => (
-            <StringRow key={k} noteIndex={v} stringIndex={k} />
-          ))}
-        </div>
+        <StringRows difficulty={difficulty} />
       )}
     </div>
   );

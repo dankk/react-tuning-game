@@ -12,13 +12,12 @@ function StartScreen(props: StartScreenProps) {
   };
 
   return (
-    <div>
-      <label
-        htmlFor="default-range"
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Default range
-      </label>
+    <div className="flex flex-col justify-center space-y-4 w-full">
+      <div className="text-center">
+        <label htmlFor="default-range" className="">
+          Difficulty: {sliderValue}
+        </label>
+      </div>
       <input
         id="default-range"
         type="range"
@@ -26,11 +25,10 @@ function StartScreen(props: StartScreenProps) {
         value={sliderValue}
         min="1"
         max="6"
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+        className="mx-auto w-48 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
       />
-
       <button
-        className="hover:bg-sky-100 font-bold py-2 px-4 border rounded"
+        className="hover:bg-sky-100 font-bold py-2 border rounded w-32 mx-auto"
         onClick={handleStart}
       >
         Start
