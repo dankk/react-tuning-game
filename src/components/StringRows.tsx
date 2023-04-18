@@ -26,45 +26,69 @@ function StringRows(props: { difficulty: number }) {
   return (
     <div className="text-center flex flex-col space-y-2">
       <h1 className="text-xl mb-4">Difficulty: {difficulty}</h1>
-      {Object.entries(notes).map(([stringIndex, noteIndex]) => (
-        <StringRow
-          key={stringIndex}
-          noteIndex={noteIndex}
-          stringIndex={stringIndex}
-          toGuess={stringsToGuess.includes(parseInt(stringIndex))}
-        />
-      ))}
+      {Object.entries(notes).map(([stringIndex, noteIndex]) =>
+        stringsToGuess.includes(parseInt(stringIndex)) ? (
+          <GuessStringRow
+            key={stringIndex}
+            correctNoteIndex={noteIndex}
+            currentNoteIndex={noteIndex + Math.floor(Math.random() * 11) - 5}
+            stringIndex={stringIndex}
+          />
+        ) : (
+          <StringRow
+            key={stringIndex}
+            noteIndex={noteIndex}
+            stringIndex={stringIndex}
+          />
+        )
+      )}
     </div>
   );
 }
 
+function GuessStringRow(props: GuessStringRowProps) {
+  const { correctNoteIndex, currentNoteIndex, stringIndex } = props;
+  const { playNote } = useNote(currentNoteIndex);
+  return (
+    <div className="flex flex-row space-x-1 mx-auto">
+      <ChangeNoteButton
+        stringIndex={stringIndex}
+        dir="DOWN"
+        noteIndex={currentNoteIndex}
+      />
+      <div
+        className="w-80 border py-2 hover:bg-sky-100 rounded-md cursor-pointer"
+        onClick={playNote}
+      >
+        ?
+      </div>
+      <ChangeNoteButton
+        stringIndex={stringIndex}
+        dir="UP"
+        noteIndex={currentNoteIndex}
+      />
+    </div>
+  );
+}
+
+type GuessStringRowProps = {
+  correctNoteIndex: number;
+  currentNoteIndex: number;
+  stringIndex: string;
+};
+
 function StringRow(props: StringRowProps) {
-  const { noteIndex, stringIndex, toGuess } = props;
-  console.log(stringIndex, toGuess);
+  const { noteIndex, stringIndex } = props;
   const { playNote } = useNote(noteIndex);
 
   return (
     <div className="flex flex-row space-x-1 mx-auto">
-      {toGuess && (
-        <ChangeNoteButton
-          stringIndex={stringIndex}
-          dir="DOWN"
-          noteIndex={noteIndex}
-        />
-      )}
       <div
         className="w-80 border py-2 hover:bg-sky-100 rounded-md cursor-pointer"
         onClick={playNote}
       >
         {noteList[noteIndex].note}
       </div>
-      {toGuess && (
-        <ChangeNoteButton
-          stringIndex={stringIndex}
-          dir="UP"
-          noteIndex={noteIndex}
-        />
-      )}
     </div>
   );
 }
@@ -72,7 +96,6 @@ function StringRow(props: StringRowProps) {
 type StringRowProps = {
   noteIndex: number;
   stringIndex: string;
-  toGuess: boolean;
 };
 
 function ChangeNoteButton(props: ChangeNoteButtonProps) {
