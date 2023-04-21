@@ -4,34 +4,20 @@ import useNote from "../app/useNote";
 import { noteList } from "../features/notes/notes";
 import { changeNote } from "../features/notes/notesSlice";
 
-function StringRows(props: { difficulty: number }) {
-  const { difficulty } = props;
+function StringRows(props: { difficulty: number; toGuess: number[] }) {
+  const { difficulty, toGuess } = props;
   const notes = useAppSelector((state) => state.notes);
-  const [stringsToGuess, setStringsToGuess] = useState<Number[]>();
+  if (!notes) return <>...</>;
 
-  console.log(stringsToGuess);
-
-  useEffect(() => {
-    const toGuess = Array.from({ length: difficulty }).map((x, i, arr) => {
-      let newIndex = Math.floor(Math.random() * 6);
-      while (arr.includes(newIndex)) {
-        newIndex = Math.floor(Math.random() * 6);
-      }
-      return newIndex;
-    });
-    setStringsToGuess(toGuess);
-  }, [difficulty]);
-
-  if (!notes || !stringsToGuess) return <>...</>;
   return (
     <div className="text-center flex flex-col space-y-2">
       <h1 className="text-xl mb-4">Difficulty: {difficulty}</h1>
       {Object.entries(notes).map(([stringIndex, noteIndex]) =>
-        stringsToGuess.includes(parseInt(stringIndex)) ? (
+        toGuess.includes(parseInt(stringIndex)) ? (
           <GuessStringRow
             key={stringIndex}
             correctNoteIndex={noteIndex}
-            currentNoteIndex={noteIndex + Math.floor(Math.random() * 11) - 5}
+            noteIndex={noteIndex}
             stringIndex={stringIndex}
           />
         ) : (
@@ -47,25 +33,26 @@ function StringRows(props: { difficulty: number }) {
 }
 
 function GuessStringRow(props: GuessStringRowProps) {
-  const { correctNoteIndex, currentNoteIndex, stringIndex } = props;
-  const { playNote } = useNote(currentNoteIndex);
+  const { noteIndex, stringIndex } = props;
+
+  const { playNote } = useNote(noteIndex);
   return (
     <div className="flex flex-row space-x-1 mx-auto">
       <ChangeNoteButton
         stringIndex={stringIndex}
         dir="DOWN"
-        noteIndex={currentNoteIndex}
+        noteIndex={noteIndex}
       />
       <div
         className="w-80 border py-2 hover:bg-sky-100 rounded-md cursor-pointer"
         onClick={playNote}
       >
-        ?
+        ? {noteList[noteIndex].note}
       </div>
       <ChangeNoteButton
         stringIndex={stringIndex}
         dir="UP"
-        noteIndex={currentNoteIndex}
+        noteIndex={noteIndex}
       />
     </div>
   );
@@ -73,7 +60,7 @@ function GuessStringRow(props: GuessStringRowProps) {
 
 type GuessStringRowProps = {
   correctNoteIndex: number;
-  currentNoteIndex: number;
+  noteIndex: number;
   stringIndex: string;
 };
 
