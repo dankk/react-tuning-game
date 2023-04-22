@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useNote from "../app/useNote";
-import { noteList } from "../features/notes/notes";
+import { noteList, tunings } from "../features/notes/notes";
 import { changeNote } from "../features/notes/notesSlice";
 
 function StringRows(props: { difficulty: number; toGuess: number[] }) {
@@ -16,7 +15,7 @@ function StringRows(props: { difficulty: number; toGuess: number[] }) {
         toGuess.includes(parseInt(stringIndex)) ? (
           <GuessStringRow
             key={stringIndex}
-            correctNoteIndex={noteIndex}
+            correctNoteIndex={tunings.standard[parseInt(stringIndex)]}
             noteIndex={noteIndex}
             stringIndex={stringIndex}
           />
@@ -28,32 +27,40 @@ function StringRows(props: { difficulty: number; toGuess: number[] }) {
           />
         )
       )}
+      <div className="justify-center mt-36">
+        <button className="w-36 border py-2 hover:bg-sky-100 rounded-md cursor-pointer">
+          Submit
+        </button>
+      </div>
     </div>
   );
 }
 
 function GuessStringRow(props: GuessStringRowProps) {
-  const { noteIndex, stringIndex } = props;
+  const { noteIndex, stringIndex, correctNoteIndex } = props;
 
   const { playNote } = useNote(noteIndex);
   return (
-    <div className="flex flex-row space-x-1 mx-auto">
-      <ChangeNoteButton
-        stringIndex={stringIndex}
-        dir="DOWN"
-        noteIndex={noteIndex}
-      />
-      <div
-        className="w-80 border py-2 hover:bg-sky-100 rounded-md cursor-pointer"
-        onClick={playNote}
-      >
-        ? {noteList[noteIndex].note}
+    <div className="flex relative">
+      <div className="flex justify-center space-x-1">
+        <ChangeNoteButton
+          stringIndex={stringIndex}
+          dir="DOWN"
+          noteIndex={noteIndex}
+        />
+        <div
+          className="w-80 border py-2 hover:bg-sky-100 rounded-md cursor-pointer"
+          onClick={playNote}
+        >
+          ? {noteList[noteIndex].note}
+        </div>
+        <ChangeNoteButton
+          stringIndex={stringIndex}
+          dir="UP"
+          noteIndex={noteIndex}
+        />
       </div>
-      <ChangeNoteButton
-        stringIndex={stringIndex}
-        dir="UP"
-        noteIndex={noteIndex}
-      />
+      <HintButton noteIndex={correctNoteIndex} />
     </div>
   );
 }
@@ -84,6 +91,21 @@ type StringRowProps = {
   noteIndex: number;
   stringIndex: string;
 };
+
+function HintButton(props: { noteIndex: number }) {
+  const { noteIndex } = props;
+  const { playNote } = useNote(noteIndex);
+  return (
+    <div className="absolute right-[-80px]">
+      <button
+        className="w-16 border rounded cursor-pointer py-2 hover:bg-sky-100"
+        onClick={() => playNote()}
+      >
+        Hint
+      </button>
+    </div>
+  );
+}
 
 function ChangeNoteButton(props: ChangeNoteButtonProps) {
   const { stringIndex, dir, noteIndex } = props;

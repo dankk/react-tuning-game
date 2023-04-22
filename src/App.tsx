@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import StartScreen from "./components/StartScreen";
 import StringRows from "./components/StringRows";
-import { tunings } from "./features/notes/notes";
+import { noteList, tunings } from "./features/notes/notes";
 import { setInitialNotes } from "./features/notes/notesSlice";
 
 function App() {
@@ -12,17 +12,20 @@ function App() {
   const [toGuess, setToGuess] = useState<number[]>([]);
 
   const handleStart = () => {
-    const toGuess = Array.from({ length: difficulty }).map((x, i, arr) => {
-      let newIndex = Math.floor(Math.random() * 6);
-      while (arr.includes(newIndex)) {
-        newIndex = Math.floor(Math.random() * 6);
+    const toGuess: number[] = [];
+
+    while (toGuess.length < difficulty) {
+      const randomStringIndex = Math.floor(Math.random() * 6);
+      if (!toGuess.includes(randomStringIndex)) {
+        toGuess.push(randomStringIndex);
       }
-      return newIndex;
-    });
+    }
 
     const initialNotes = tunings.standard.map((noteIndex, i) => {
       if (toGuess.includes(i)) {
-        return noteIndex + Math.floor(Math.random() * 11) - 5;
+        let newNoteIndex = noteIndex + Math.floor(Math.random() * 11) - 5;
+        newNoteIndex = Math.max(newNoteIndex, 0);
+        newNoteIndex = Math.min(newNoteIndex, noteList.length - 1);
       }
       return noteIndex;
     });
