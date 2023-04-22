@@ -9,7 +9,10 @@ interface NoteState {
   5: number;
 }
 
-type InitialState = NoteState | null;
+type InitialState = {
+  selectedNotes: NoteState;
+  correctNotes: NoteState;
+} | null;
 
 export const notesSlice = createSlice({
   name: "notes",
@@ -23,9 +26,21 @@ export const notesSlice = createSlice({
       const stringIndex: keyof NoteState = action.payload.stringIndex;
       switch (action.payload.direction) {
         case "UP":
-          return { ...state, [stringIndex]: state[stringIndex] + 1 };
+          return {
+            ...state,
+            selectedNotes: {
+              ...state.selectedNotes,
+              [stringIndex]: state.selectedNotes[stringIndex] + 1,
+            },
+          };
         case "DOWN":
-          return { ...state, [stringIndex]: state[stringIndex] - 1 };
+          return {
+            ...state,
+            selectedNotes: {
+              ...state.selectedNotes,
+              [stringIndex]: state.selectedNotes[stringIndex] - 1,
+            },
+          };
         default:
           return state;
       }

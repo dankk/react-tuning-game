@@ -5,7 +5,7 @@ import { changeNote } from "../features/notes/notesSlice";
 
 function StringRows(props: { difficulty: number; toGuess: number[] }) {
   const { difficulty, toGuess } = props;
-  const notes = useAppSelector((state) => state.notes);
+  const notes = useAppSelector((state) => state.notes?.selectedNotes);
   if (!notes) return <>...</>;
 
   return (
@@ -27,11 +27,32 @@ function StringRows(props: { difficulty: number; toGuess: number[] }) {
           />
         )
       )}
-      <div className="justify-center mt-36">
-        <button className="w-36 border py-2 hover:bg-sky-100 rounded-md cursor-pointer">
-          Submit
-        </button>
-      </div>
+      <SubmitButton />
+    </div>
+  );
+}
+
+function SubmitButton() {
+  const notes = useAppSelector((state) => state.notes);
+
+  const handleSubmit = () => {
+    if (!notes) return;
+    const selectedNotesArray = Object.values(notes.selectedNotes);
+    const correctNotesArray = Object.values(notes.correctNotes);
+    const result = selectedNotesArray.every(
+      (val, i) => val === correctNotesArray[i]
+    );
+    console.log(result);
+  };
+
+  return (
+    <div className="justify-center">
+      <button
+        className="w-36 border py-2 hover:bg-sky-100 rounded-md cursor-pointer mt-6"
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
     </div>
   );
 }

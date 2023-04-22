@@ -7,7 +7,7 @@ import { setInitialNotes } from "./features/notes/notesSlice";
 
 function App() {
   const dispatch = useAppDispatch();
-  const notes = useAppSelector((state) => state.notes);
+  const notes = useAppSelector((state) => state.notes?.selectedNotes);
   const difficulty = useAppSelector((state) => state.slider);
   const [toGuess, setToGuess] = useState<number[]>([]);
 
@@ -26,12 +26,18 @@ function App() {
         let newNoteIndex = noteIndex + Math.floor(Math.random() * 11) - 5;
         newNoteIndex = Math.max(newNoteIndex, 0);
         newNoteIndex = Math.min(newNoteIndex, noteList.length - 1);
+        return newNoteIndex;
       }
       return noteIndex;
     });
 
     setToGuess(toGuess);
-    dispatch(setInitialNotes(initialNotes));
+    dispatch(
+      setInitialNotes({
+        selectedNotes: initialNotes,
+        correctNotes: tunings.standard,
+      })
+    );
   };
 
   return (
