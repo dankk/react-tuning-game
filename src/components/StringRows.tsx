@@ -1,16 +1,56 @@
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useNote from "../app/useNote";
 import { noteList, tunings } from "../features/notes/notes";
-import { changeNote } from "../features/notes/notesSlice";
+import { changeNote, setInitialNotes } from "../features/notes/notesSlice";
 
-function StringRows(props: { difficulty: number; toGuess: number[] }) {
-  const { difficulty, toGuess } = props;
+function StringRows(props: StringRowsProps) {
+  const { round, setRound, score, setScore } = props;
+  const [toGuess, setToGuess] = useState<number[]>([]);
+  const difficulty = useAppSelector((state) => state.slider);
+  const dispatch = useAppDispatch();
+
+  const handleSetNotes = useCallback(() => {
+    const toGuess: number[] = [];
+
+    while (toGuess.length < difficulty) {
+      const randomStringIndex = Math.floor(Math.random() * 6);
+      if (!toGuess.includes(randomStringIndex)) {
+        toGuess.push(randomStringIndex);
+      }
+    }
+
+    const initialNotes = tunings.standard.map((noteIndex, i) => {
+      if (toGuess.includes(i)) {
+        let newNoteIndex = noteIndex + Math.floor(Math.random() * 11) - 5;
+        newNoteIndex = Math.max(newNoteIndex, 0);
+        newNoteIndex = Math.min(newNoteIndex, noteList.length - 1);
+        return newNoteIndex;
+      }
+      return noteIndex;
+    });
+
+    setToGuess(toGuess);
+    dispatch(
+      setInitialNotes({
+        selectedNotes: initialNotes,
+        correctNotes: tunings.standard,
+      })
+    );
+  }, [round]);
+
+  useEffect(() => {
+    handleSetNotes();
+  }, [round]);
+
   const notes = useAppSelector((state) => state.notes?.selectedNotes);
   if (!notes) return <>...</>;
 
   return (
     <div className="text-center flex flex-col space-y-2">
-      <h1 className="text-xl mb-4">Difficulty: {difficulty}</h1>
+      <span className="text-xl">Difficulty: {difficulty}</span>
+      <span className="text-xl">Round: {round}</span>
+      <span className="text-xl">Score: {score}</span>
       {Object.entries(notes).map(([stringIndex, noteIndex]) =>
         toGuess.includes(parseInt(stringIndex)) ? (
           <GuessStringRow
@@ -27,22 +67,36 @@ function StringRows(props: { difficulty: number; toGuess: number[] }) {
           />
         )
       )}
-      <SubmitButton />
+      <SubmitButton setRound={setRound} setScore={setScore} />
     </div>
   );
 }
 
-function SubmitButton() {
+type StringRowsProps = {
+  round: number;
+  setRound: React.Dispatch<React.SetStateAction<number>>;
+  score: number;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
+};
+
+function SubmitButton(props: {
+  setRound: React.Dispatch<React.SetStateAction<number>>;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const { setRound, setScore } = props;
   const notes = useAppSelector((state) => state.notes);
 
   const handleSubmit = () => {
     if (!notes) return;
     const selectedNotesArray = Object.values(notes.selectedNotes);
     const correctNotesArray = Object.values(notes.correctNotes);
-    const result = selectedNotesArray.every(
+    const isCorrect = selectedNotesArray.every(
       (val, i) => val === correctNotesArray[i]
     );
-    console.log(result);
+    if (isCorrect) {
+      setScore((s) => s + 1);
+    }
+    setRound((r: number) => r + 1);
   };
 
   return (
