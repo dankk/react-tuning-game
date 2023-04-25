@@ -3,6 +3,8 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useNote from "../app/useNote";
 import { noteList, tunings } from "../features/notes/notes";
 import { changeNote, setInitialNotes } from "../features/notes/notesSlice";
+import { FaTimes } from "react-icons/fa";
+import { FcCheckmark } from "react-icons/fc";
 
 function StringRows(props: StringRowsProps) {
   const { round, setRound, score, setScore } = props;
@@ -85,6 +87,7 @@ function SubmitButton(props: {
 }) {
   const { setRound, setScore } = props;
   const notes = useAppSelector((state) => state.notes);
+  const [result, setResult] = useState({ showResult: false, isCorrect: false });
 
   const handleSubmit = () => {
     if (!notes) return;
@@ -96,17 +99,28 @@ function SubmitButton(props: {
     if (isCorrect) {
       setScore((s) => s + 1);
     }
-    setRound((r: number) => r + 1);
+    setResult({ showResult: true, isCorrect });
+
+    setTimeout(() => {
+      setRound((r: number) => r + 1);
+      setResult({ showResult: false, isCorrect: false });
+    }, 750);
   };
 
   return (
-    <div className="justify-center">
-      <button
-        className="w-36 border py-2 hover:bg-sky-100 rounded-md cursor-pointer mt-6"
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
+    <div className="flex justify-center">
+      {result.showResult ? (
+        <div className="mt-6 py-2">
+          {result.isCorrect ? <FcCheckmark /> : <FaTimes />}
+        </div>
+      ) : (
+        <button
+          className="w-36 border py-2 hover:bg-sky-100 rounded-md cursor-pointer mt-6"
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+      )}
     </div>
   );
 }
