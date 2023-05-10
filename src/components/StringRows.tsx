@@ -184,14 +184,22 @@ type StringRowProps = {
 function HintButton(props: { noteIndex: number }) {
   const { noteIndex } = props;
   const { playNote } = useNote(noteIndex);
+  const [hintUsed, setHintUsed] = useState(false);
+
   return (
     <div className="absolute right-[-80px]">
-      <button
-        className="w-16 border rounded cursor-pointer py-2 hover:bg-sky-100"
-        onClick={() => playNote()}
-      >
-        Hint
-      </button>
+      {hintUsed ? null : (
+        <button
+          className="w-16 border rounded cursor-pointer py-2 hover:bg-sky-100"
+          onClick={() => {
+            playNote();
+            setHintUsed(true);
+          }}
+          disabled={hintUsed}
+        >
+          Hint
+        </button>
+      )}
     </div>
   );
 }
